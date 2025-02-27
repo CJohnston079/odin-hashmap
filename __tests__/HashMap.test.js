@@ -44,4 +44,46 @@ describe("HashMap", () => {
 			expect(hash).toBeLessThan(capacity);
 		});
 	});
+	describe("set", () => {
+		let map, mockBucket;
+
+		beforeEach(() => {
+			map = new HashMap(16);
+
+			mockBucket = {
+				append: jest.fn(),
+			};
+
+			hashSpy = jest.spyOn(map, "hash").mockReturnValue(3);
+			map._buckets[3] = mockBucket;
+		});
+		it("defines set()", () => {
+			expect(typeof map.set).toBe("function");
+		});
+		it("assigns a value to a key with null value", () => {
+			const keyVal = { key: "Rama", value: "red" };
+			map.set(keyVal.key, keyVal.value);
+			expect(mockBucket.append).toHaveBeenCalledWith(keyVal);
+		});
+		it("overwrites the old value of a key if it already exists in the bucket", () => {
+			const keyVal1 = { key: "Rama", value: "red" };
+			const keyVal2 = { key: "Rama", value: "green" };
+
+			mockBucket._head = { value: keyVal1, next: null };
+			map.set(keyVal2.key, keyVal2.value);
+
+			expect(mockBucket._head.value.value).toBe("green");
+		});
+		it("handles collisions by storing multiple key-value pairs in the same bucket", () => {
+			const keyVal1 = { key: "Rama", value: "red" };
+			const keyVal2 = { key: "Sita", value: "green" };
+
+			map.set(keyVal1.key, keyVal1.value);
+			map.set(keyVal2.key, keyVal2.value);
+
+			expect(mockBucket.append).toHaveBeenCalledTimes(2);
+			expect(mockBucket.append).toHaveBeenCalledWith(keyVal1);
+			expect(mockBucket.append).toHaveBeenCalledWith(keyVal2);
+		});
+	});
 });
