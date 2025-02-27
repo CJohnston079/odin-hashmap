@@ -1,11 +1,20 @@
 import HashMap from "../src/HashMap";
+import LinkedList from "../src/LinkedList.js";
 
 describe("HashMap", () => {
 	describe("constructor", () => {
-		it("initialises with 'capacity' and 'loadFactor', defaulting to 16 and 0.75", () => {
+		it("initialises with '_capacity' and '_loadFactor', defaulting to 16 and 0.75", () => {
 			const map = new HashMap();
 			expect(map._capacity).toBe(16);
 			expect(map._loadFactor).toBe(0.75);
+		});
+		it("initializes '_buckets' as an array of LinkedLists", () => {
+			const map = new HashMap();
+			expect(Array.isArray(map._buckets)).toBe(true);
+			expect(map._buckets.length).toBe(16);
+			map._buckets.forEach(bucket => {
+				expect(bucket).toBeInstanceOf(LinkedList);
+			});
 		});
 	});
 	describe("hash", () => {
@@ -30,8 +39,6 @@ describe("HashMap", () => {
 				String.fromCharCode(97 + Math.floor(Math.random() * 26))
 			).join("");
 			const hash = map.hash(longKey);
-
-			console.log(hash);
 
 			expect(hash).toBeGreaterThanOrEqual(0);
 			expect(hash).toBeLessThan(capacity);
