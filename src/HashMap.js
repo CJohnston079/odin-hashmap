@@ -18,6 +18,25 @@ class HashMap {
 
 		return hashCode;
 	}
+
+	set(key, value) {
+		const hashCode = this.hash(key);
+		const bucket = this._buckets[hashCode];
+
+		let current = bucket._head;
+
+		while (current) {
+			if (current.value.key === key) {
+				current.value.value = value;
+				return;
+			}
+			current = current.next;
+		}
+
+		bucket.append({ key, value });
+
+		return;
+	}
 }
 
 export default HashMap;
