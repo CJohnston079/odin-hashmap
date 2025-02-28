@@ -14,15 +14,36 @@ class Bucket {
 		return this._length;
 	}
 
-	append(value) {
-		const node = new Node(value);
+	append(keyVal) {
+		if (
+			typeof keyVal !== "object" ||
+			keyVal === null ||
+			!("key" in keyVal) ||
+			!("value" in keyVal) ||
+			typeof keyVal.key !== "string"
+		) {
+			throw new TypeError(
+				"Expected a key-value pair with structure { key: <key>, value: <value> }"
+			);
+		}
+
+		const node = new Node(keyVal);
 
 		if (!this._head) {
 			this._head = node;
 		} else {
 			let current = this._head;
 
-			while (current.next) {
+			while (current) {
+				if (current.value.key === keyVal.key) {
+					current.value.value = keyVal.value;
+					return;
+				}
+
+				if (!current.next) {
+					break;
+				}
+
 				current = current.next;
 			}
 
