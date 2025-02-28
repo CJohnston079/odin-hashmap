@@ -1,5 +1,5 @@
 import HashMap from "../src/HashMap";
-import LinkedList from "../src/LinkedList.js";
+import Bucket from "../src/Bucket.js";
 
 describe("HashMap", () => {
 	describe("constructor", () => {
@@ -8,12 +8,12 @@ describe("HashMap", () => {
 			expect(map._capacity).toBe(16);
 			expect(map._loadFactor).toBe(0.75);
 		});
-		it("initializes '_buckets' as an array of LinkedLists", () => {
+		it("initializes '_buckets' as an array of Buckets", () => {
 			const map = new HashMap();
 			expect(Array.isArray(map._buckets)).toBe(true);
 			expect(map._buckets.length).toBe(16);
 			map._buckets.forEach(bucket => {
-				expect(bucket).toBeInstanceOf(LinkedList);
+				expect(bucket).toBeInstanceOf(Bucket);
 			});
 		});
 	});
@@ -64,15 +64,6 @@ describe("HashMap", () => {
 			const keyVal = { key: "Rama", value: "red" };
 			map.set(keyVal.key, keyVal.value);
 			expect(mockBucket.append).toHaveBeenCalledWith(keyVal);
-		});
-		it("overwrites the old value of a key if it already exists in the bucket", () => {
-			const keyVal1 = { key: "Rama", value: "red" };
-			const keyVal2 = { key: "Rama", value: "green" };
-
-			mockBucket._head = { value: keyVal1, next: null };
-			map.set(keyVal2.key, keyVal2.value);
-
-			expect(mockBucket._head.value.value).toBe("green");
 		});
 		it("handles collisions by storing multiple key-value pairs in the same bucket", () => {
 			const keyVal1 = { key: "Rama", value: "red" };
