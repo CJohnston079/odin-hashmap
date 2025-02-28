@@ -41,10 +41,28 @@ describe("Bucket", () => {
 			expect(emptyBucket._head.next.value).toEqual({ key: "banana", value: "yellow" });
 			expect(emptyBucket._head.next.next).toBeNull();
 		});
+		it("should overwrite the value of a node if the key is already in the bucket", () => {
+			testBucket.append({ key: "carrot", value: "brown" });
+			testBucket.append({ key: "banana", value: "lime" });
+			testBucket.append({ key: "apple", value: "green" });
+			expect(testBucket._head.value).toEqual({ key: "carrot", value: "brown" });
+			expect(testBucket._head.next.value).toEqual({ key: "banana", value: "lime" });
+			expect(testBucket._head.next.next.value).toEqual({ key: "apple", value: "green" });
+		});
 		it("increments _length when appending a node", () => {
 			const startingLength = emptyBucket._length;
 			emptyBucket.append({ key: "carrot", value: "orange" });
 			expect(emptyBucket._length).toBe(startingLength + 1);
+		});
+		it("does not increment _length when overwriting value", () => {
+			const startingLength = testBucket._length;
+			testBucket.append({ key: "carrot", value: "brown" });
+			expect(testBucket._length).toBe(startingLength);
+		});
+		it("throws a TypeError when passed a non key-value pair", () => {
+			expect(() => {
+				emptyBucket.append("apple");
+			}).toThrow(TypeError);
 		});
 	});
 	describe("head", () => {
