@@ -16,6 +16,11 @@ describe("HashMap", () => {
 				expect(bucket).toBeInstanceOf(Bucket);
 			});
 		});
+		it("defines _length with getter", () => {
+			const map = new HashMap();
+			expect(map._length).toBe(0);
+			expect(HashMap.prototype.hasOwnProperty("length")).toBe(true);
+		});
 	});
 	describe("hash", () => {
 		it("returns 0 for empty strings", () => {
@@ -75,6 +80,11 @@ describe("HashMap", () => {
 			expect(mockBucket.append).toHaveBeenCalledTimes(2);
 			expect(mockBucket.append).toHaveBeenCalledWith(keyVal1);
 			expect(mockBucket.append).toHaveBeenCalledWith(keyVal2);
+		});
+		it("increments '_length' on successfully appending", () => {
+			const startLength = map._length;
+			map.set("apple", "red");
+			expect(map._length).toBe(startLength + 1);
 		});
 	});
 });
