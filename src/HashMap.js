@@ -5,6 +5,11 @@ class HashMap {
 		this._capacity = capacity;
 		this._loadFactor = loadFactor;
 		this._buckets = new Array(16).fill(null).map(() => new Bucket());
+		this._length = 0;
+	}
+
+	get length() {
+		return this._length;
 	}
 
 	hash(key) {
@@ -24,6 +29,8 @@ class HashMap {
 		const bucket = this._buckets[hashCode];
 
 		bucket.append({ key, value });
+
+		this._length += 1;
 
 		return;
 	}
