@@ -87,4 +87,19 @@ describe("HashMap", () => {
 			expect(map._length).toBe(startLength + 1);
 		});
 	});
+	describe("clear", () => {
+		it("defines clear()", () => {
+			const map = new HashMap();
+			expect(typeof map.clear).toBe("function");
+		});
+		it("removes all entries in the hash map", () => {
+			const map = new HashMap();
+
+			map.set("apple", "red");
+			map.set("banana", "yellow");
+			map.clear();
+
+			expect(map._buckets.every(bucket => bucket._head === null)).toBe(true);
+		});
+	});
 });
