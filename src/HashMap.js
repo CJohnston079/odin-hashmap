@@ -34,6 +34,10 @@ class HashMap {
 
 		return;
 	}
+
+	clear() {
+		this._buckets = new Array(16).fill(null).map(() => new Bucket());
+	}
 }
 
 export default HashMap;
