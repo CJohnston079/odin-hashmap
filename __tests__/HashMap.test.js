@@ -87,6 +87,21 @@ describe("HashMap", () => {
 			expect(map._length).toBe(startLength + 1);
 		});
 	});
+	describe("has", () => {
+		it("defines has()", () => {
+			const map = new HashMap();
+			expect(typeof map.has).toBe("function");
+		});
+		it("returns a false if a given key is not in the hash map", () => {
+			const map = new HashMap();
+			expect(map.has("apple")).toBe(false);
+		});
+		it("returns a true if a given key is in the hash map", () => {
+			const map = new HashMap();
+			map.set("apple", "red");
+			expect(map.has("apple")).toBe(true);
+		});
+	});
 	describe("clear", () => {
 		it("defines clear()", () => {
 			const map = new HashMap();
