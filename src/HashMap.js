@@ -35,6 +35,14 @@ class HashMap {
 		return;
 	}
 
+	has(key) {
+		const hashCode = this.hash(key);
+		const bucket = this._buckets[hashCode];
+		const isKeyInBucket = bucket.containsKey(key);
+
+		return isKeyInBucket;
+	}
+
 	clear() {
 		this._buckets = new Array(16).fill(null).map(() => new Bucket());
 	}
