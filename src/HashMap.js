@@ -35,6 +35,23 @@ class HashMap {
 		return;
 	}
 
+	get(key) {
+		const hashCode = this.hash(key);
+		const bucket = this._buckets[hashCode];
+
+		let current = bucket._head;
+
+		for (let i = 0; i < bucket._length; i += 1) {
+			if (current.value.key === key) {
+				return current.value.value;
+			}
+
+			current = current.next;
+		}
+
+		return null;
+	}
+
 	has(key) {
 		const hashCode = this.hash(key);
 		const bucket = this._buckets[hashCode];
