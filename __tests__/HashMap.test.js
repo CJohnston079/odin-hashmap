@@ -87,6 +87,34 @@ describe("HashMap", () => {
 			expect(map._length).toBe(startLength + 1);
 		});
 	});
+	describe("get", () => {
+		it("defines get()", () => {
+			const map = new HashMap();
+			expect(typeof map.get).toBe("function");
+		});
+		it("returns null if key not found", () => {
+			const map = new HashMap();
+			map.set("Rama", "red");
+			expect(map.get("Sita")).toBe(null);
+		});
+		it("returns the value for a key where the key has no collisions", () => {
+			const keyVal = { key: "Rama", value: "red" };
+			const map = new HashMap();
+			map.set(keyVal.key, keyVal.value);
+			expect(map.get(keyVal.key)).toBe(keyVal.value);
+		});
+		it("returns the value for a key where the key has collisions", () => {
+			const map = new HashMap();
+			const keyVal1 = { key: "Rama", value: "red" };
+			const keyVal2 = { key: "Sita", value: "green" };
+
+			map.set(keyVal1.key, keyVal1.value);
+			map.set(keyVal2.key, keyVal2.value);
+
+			expect(map.get(keyVal1.key)).toBe(keyVal1.value);
+			expect(map.get(keyVal2.key)).toBe(keyVal2.value);
+		});
+	});
 	describe("has", () => {
 		it("defines has()", () => {
 			const map = new HashMap();
