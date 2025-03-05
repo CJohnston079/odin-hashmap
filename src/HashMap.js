@@ -52,6 +52,29 @@ class HashMap {
 		return null;
 	}
 
+	remove(key) {
+		const hashCode = this.hash(key);
+		const bucket = this._buckets[hashCode];
+
+		if (bucket._head.value.key === key) {
+			bucket._head = null;
+			return true;
+		}
+
+		let current = bucket._head;
+
+		for (let i = 0; i < bucket._length; i += 1) {
+			if (current.next && current.next.value.key === key) {
+				current.next = current.next.next;
+				return true;
+			}
+
+			current = current.next;
+		}
+
+		return false;
+	}
+
 	has(key) {
 		const hashCode = this.hash(key);
 		const bucket = this._buckets[hashCode];
