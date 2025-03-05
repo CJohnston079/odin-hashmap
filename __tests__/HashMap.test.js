@@ -130,6 +130,42 @@ describe("HashMap", () => {
 			expect(map.has("apple")).toBe(true);
 		});
 	});
+	describe.only("remove", () => {
+		it("defines remove()", () => {
+			const map = new HashMap();
+			expect(typeof map.remove).toBe("function");
+		});
+		it("returns false if key not found", () => {
+			const map = new HashMap();
+			map.set("Rama", "red");
+			expect(map.remove("Sita")).toBe(false);
+		});
+		it("returns true if key is in the hash map", () => {
+			const map = new HashMap();
+			map.set("Rama", "red");
+			expect(map.remove("Rama")).toBe(true);
+		});
+		it("removes the value for a key where the key has no collisions", () => {
+			const keyVal = { key: "Rama", value: "red" };
+			const map = new HashMap();
+
+			map.set(keyVal.key, keyVal.value);
+			map.remove(keyVal.key);
+
+			expect(map.has(keyVal.key)).toBe(false);
+		});
+		it("removes the value for a key where the key has collisions", () => {
+			const map = new HashMap();
+			const keyVal1 = { key: "Rama", value: "red" };
+			const keyVal2 = { key: "Sita", value: "green" };
+
+			map.set(keyVal1.key, keyVal1.value);
+			map.set(keyVal2.key, keyVal2.value);
+			map.remove(keyVal1.key);
+
+			expect(map.has(keyVal1.key)).toBe(false);
+		});
+	});
 	describe("clear", () => {
 		it("defines clear()", () => {
 			const map = new HashMap();
