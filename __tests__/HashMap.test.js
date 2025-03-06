@@ -130,7 +130,7 @@ describe("HashMap", () => {
 			expect(map.has("apple")).toBe(true);
 		});
 	});
-	describe.only("remove", () => {
+	describe("remove", () => {
 		it("defines remove()", () => {
 			const map = new HashMap();
 			expect(typeof map.remove).toBe("function");
@@ -179,6 +179,48 @@ describe("HashMap", () => {
 			map.clear();
 
 			expect(map._buckets.every(bucket => bucket._head === null)).toBe(true);
+		});
+	});
+	describe("keys", () => {
+		it("defines keys()", () => {
+			const map = new HashMap();
+			expect(typeof map.keys).toBe("function");
+		});
+		it("returns an array containing all keys, not necessarily in order", () => {
+			const keyVals = [
+				{ key: "Rama", value: "red" },
+				{ key: "Sita", value: "green" },
+				{ key: "apple", value: "red" },
+				{ key: "banana", value: "yellow" },
+				{ key: "carrot", value: "orange" },
+			];
+			const keys = keyVals.map(keyVal => keyVal.key);
+			const map = new HashMap();
+
+			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
+
+			expect(map.keys().sort()).toEqual(keys.sort());
+		});
+	});
+	describe("keys", () => {
+		it("defines values()", () => {
+			const map = new HashMap();
+			expect(typeof map.values).toBe("function");
+		});
+		it("returns an array containing all values, not necessarily in order", () => {
+			const keyVals = [
+				{ key: "Rama", value: "red" },
+				{ key: "Sita", value: "green" },
+				{ key: "apple", value: "red" },
+				{ key: "banana", value: "yellow" },
+				{ key: "carrot", value: "orange" },
+			];
+			const values = keyVals.map(keyVal => keyVal.value);
+			const map = new HashMap();
+
+			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
+
+			expect(map.values().sort()).toEqual(values.sort());
 		});
 	});
 });
