@@ -86,6 +86,36 @@ class HashMap {
 	clear() {
 		this._buckets = new Array(16).fill(null).map(() => new Bucket());
 	}
+
+	keys() {
+		const keys = this._buckets.reduce((bucketKeys, bucket) => {
+			let current = bucket._head;
+
+			while (current) {
+				bucketKeys.push(current.value.key);
+				current = current.next;
+			}
+
+			return bucketKeys;
+		}, []);
+
+		return keys;
+	}
+
+	values() {
+		const values = this._buckets.reduce((bucketVals, bucket) => {
+			let current = bucket._head;
+
+			while (current) {
+				bucketVals.push(current.value.value);
+				current = current.next;
+			}
+
+			return bucketVals;
+		}, []);
+
+		return values;
+	}
 }
 
 export default HashMap;
