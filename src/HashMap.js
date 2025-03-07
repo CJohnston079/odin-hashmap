@@ -116,6 +116,23 @@ class HashMap {
 
 		return values;
 	}
+
+	entries() {
+		const entries = this._buckets.reduce((bucketEntries, bucket) => {
+			let current = bucket._head;
+
+			while (current) {
+				const key = current.value.key;
+				const value = current.value.value;
+				bucketEntries.push([key, value]);
+				current = current.next;
+			}
+
+			return bucketEntries;
+		}, []);
+
+		return entries;
+	}
 }
 
 export default HashMap;
