@@ -223,4 +223,25 @@ describe("HashMap", () => {
 			expect(map.values().sort()).toEqual(values.sort());
 		});
 	});
+	describe("entries", () => {
+		it("defines entries()", () => {
+			const map = new HashMap();
+			expect(typeof map.entries).toBe("function");
+		});
+		it("returns an array that contains each key-value pair", () => {
+			const keyVals = [
+				{ key: "Rama", value: "red" },
+				{ key: "Sita", value: "green" },
+				{ key: "apple", value: "red" },
+				{ key: "banana", value: "yellow" },
+				{ key: "carrot", value: "orange" },
+			];
+			const entries = keyVals.map(keyVal => [keyVal.key, keyVal.value]);
+			const map = new HashMap();
+
+			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
+
+			expect(map.entries().sort()).toEqual(entries.sort());
+		});
+	});
 });
