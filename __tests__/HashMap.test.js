@@ -82,9 +82,33 @@ describe("HashMap", () => {
 			expect(mockBucket.append).toHaveBeenCalledWith(keyVal2);
 		});
 		it("increments '_length' on successfully appending", () => {
-			const startLength = map._length;
-			map.set("apple", "red");
-			expect(map._length).toBe(startLength + 1);
+			const newMap = new HashMap();
+			const startLength = newMap._length;
+			const keyVals = [
+				{ key: "Rama", value: "red" },
+				{ key: "Sita", value: "green" },
+				{ key: "apple", value: "red" },
+				{ key: "banana", value: "yellow" },
+				{ key: "carrot", value: "orange" },
+			];
+
+			keyVals.forEach(keyVal => newMap.set(keyVal.key, keyVal.value));
+
+			expect(newMap._length).toBe(startLength + keyVals.length);
+		});
+		it("does not increment '_length' when writing to an existing key", () => {
+			const newMap = new HashMap();
+			const startLength = newMap._length;
+			const keyVals = [
+				{ key: "Rama", value: "red" },
+				{ key: "Sita", value: "green" },
+				{ key: "apple", value: "red" },
+			];
+
+			keyVals.forEach(keyVal => newMap.set(keyVal.key, keyVal.value));
+			newMap.set("apple", "green");
+
+			expect(newMap._length).toBe(startLength + keyVals.length);
 		});
 	});
 	describe("get", () => {
@@ -164,6 +188,32 @@ describe("HashMap", () => {
 			map.remove(keyVal1.key);
 
 			expect(map.has(keyVal1.key)).toBe(false);
+		});
+		it("decrements '_length' when removing a value", () => {
+			const map = new HashMap();
+			const keyVal1 = { key: "Rama", value: "red" };
+			const keyVal2 = { key: "Sita", value: "green" };
+
+			map.set(keyVal1.key, keyVal1.value);
+			map.set(keyVal2.key, keyVal2.value);
+
+			const length = map._length;
+
+			map.remove(keyVal2.key);
+
+			expect(map._length).toBe(length - 1);
+		});
+		it("decrements '_length' when removing a the last value in the hash mpa", () => {
+			const map = new HashMap();
+			const keyVal = { key: "Rama", value: "red" };
+
+			map.set(keyVal.key, keyVal.value);
+
+			const length = map._length;
+
+			map.remove(keyVal.key);
+
+			expect(map._length).toBe(length - 1);
 		});
 	});
 	describe("clear", () => {
