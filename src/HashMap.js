@@ -27,10 +27,13 @@ class HashMap {
 	set(key, value) {
 		const hashCode = this.hash(key);
 		const bucket = this._buckets[hashCode];
+		const bucketSize = bucket.size;
 
 		bucket.append({ key, value });
 
-		this._length += 1;
+		if (bucket.size > bucketSize) {
+			this._length += 1;
+		}
 
 		return;
 	}
@@ -58,6 +61,7 @@ class HashMap {
 
 		if (bucket._head.value.key === key) {
 			bucket._head = null;
+			this._length -= 1;
 			return true;
 		}
 
@@ -66,6 +70,7 @@ class HashMap {
 		for (let i = 0; i < bucket._length; i += 1) {
 			if (current.next && current.next.value.key === key) {
 				current.next = current.next.next;
+				this._length -= 1;
 				return true;
 			}
 
