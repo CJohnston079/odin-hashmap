@@ -29,9 +29,6 @@ class HashMap {
 		const bucket = this._buckets[hashCode];
 		const bucketSize = bucket.size;
 
-		// console.log("hashCode:", hashCode);
-		// console.log("bucket:", bucket);
-
 		bucket.append({ key, value });
 
 		if (bucket.size > bucketSize) {
@@ -61,6 +58,10 @@ class HashMap {
 	remove(key) {
 		const hashCode = this.hash(key);
 		const bucket = this._buckets[hashCode];
+
+		if (!bucket._head) {
+			return false;
+		}
 
 		if (bucket._head.value.key === key) {
 			bucket._head = bucket._head.next;
