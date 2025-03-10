@@ -179,7 +179,7 @@ describe("HashMap", () => {
 			expect(map.has(keyVal.key)).toBe(false);
 		});
 		it("removes the value for a key where the key has collisions", () => {
-			const map = new HashMap();
+			const map = new HashMap(1);
 			const keyVal1 = { key: "Rama", value: "red" };
 			const keyVal2 = { key: "Sita", value: "green" };
 
@@ -188,6 +188,7 @@ describe("HashMap", () => {
 			map.remove(keyVal1.key);
 
 			expect(map.has(keyVal1.key)).toBe(false);
+			expect(map._buckets[0].head).not.toBeNull();
 		});
 		it("decrements '_length' when removing a value", () => {
 			const map = new HashMap();

@@ -4,7 +4,7 @@ class HashMap {
 	constructor(capacity = 16, loadFactor = 0.75) {
 		this._capacity = capacity;
 		this._loadFactor = loadFactor;
-		this._buckets = new Array(16).fill(null).map(() => new Bucket());
+		this._buckets = new Array(capacity).fill(null).map(() => new Bucket());
 		this._length = 0;
 	}
 
@@ -28,6 +28,9 @@ class HashMap {
 		const hashCode = this.hash(key);
 		const bucket = this._buckets[hashCode];
 		const bucketSize = bucket.size;
+
+		// console.log("hashCode:", hashCode);
+		// console.log("bucket:", bucket);
 
 		bucket.append({ key, value });
 
@@ -60,7 +63,7 @@ class HashMap {
 		const bucket = this._buckets[hashCode];
 
 		if (bucket._head.value.key === key) {
-			bucket._head = null;
+			bucket._head = bucket._head.next;
 			this._length -= 1;
 			return true;
 		}
