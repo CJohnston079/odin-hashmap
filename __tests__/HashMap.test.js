@@ -2,296 +2,240 @@ import HashMap from "../src/HashMap";
 import Bucket from "../src/Bucket.js";
 
 describe("HashMap", () => {
+	const keyVals = [
+		{ key: "apple", value: "red" },
+		{ key: "banana", value: "yellow" },
+		{ key: "carrot", value: "orange" },
+		{ key: "dog", value: "brown" },
+		{ key: "elephant", value: "gray" },
+		{ key: "frog", value: "green" },
+		{ key: "grape", value: "purple" },
+		{ key: "hat", value: "black" },
+		{ key: "ice cream", value: "white" },
+		{ key: "jacket", value: "blue" },
+		{ key: "kite", value: "pink" },
+		{ key: "lion", value: "golden" },
+	];
+	const keyVal = keyVals[Math.floor(Math.random() * keyVals.length)];
+	let map, singleBucketMap;
+
+	beforeEach(() => {
+		map = new HashMap();
+		singleBucketMap = new HashMap(1, 1);
+	});
+
 	describe("constructor", () => {
-		it("initialises with '_capacity' and '_loadFactor', defaulting to 16 and 0.75", () => {
-			const map = new HashMap();
-			expect(map._capacity).toBe(16);
-			expect(map._loadFactor).toBe(0.75);
+		const capacity = Math.max(2, Math.floor(Math.random() * 16));
+		const loadFactor = Math.floor(Math.random() * 10) / 10;
+		let defaultMap, customMap;
+
+		beforeEach(() => {
+			defaultMap = new HashMap();
+			customMap = new HashMap(capacity, loadFactor);
 		});
-		it("initializes '_buckets' as an array of Buckets", () => {
-			const map = new HashMap();
-			expect(Array.isArray(map._buckets)).toBe(true);
-			expect(map._buckets.length).toBe(16);
-			map._buckets.forEach(bucket => {
+
+		it("initialises with '_capacity' and '_loadFactor', defaulting to 16 and 0.75", () => {
+			expect(defaultMap._capacity).toBe(16);
+			expect(defaultMap._loadFactor).toBe(0.75);
+			expect(customMap._capacity).toBe(capacity);
+			expect(customMap._loadFactor).toBe(loadFactor);
+		});
+		it("initializes '_buckets' as an array of Buckets with a length of `_capacity", () => {
+			expect(Array.isArray(defaultMap._buckets)).toBe(true);
+			expect(defaultMap._buckets.length).toBe(16);
+			expect(customMap._buckets.length).toBe(capacity);
+			customMap._buckets.forEach(bucket => {
 				expect(bucket).toBeInstanceOf(Bucket);
 			});
 		});
-		it("defines _length with getter", () => {
-			const map = new HashMap();
-			expect(map._length).toBe(0);
+		it("initiaslises '_length' at 0, with a getter method", () => {
+			expect(defaultMap._length).toBe(0);
 			expect(HashMap.prototype.hasOwnProperty("length")).toBe(true);
 		});
 	});
-	describe("hash", () => {
+	describe("hash()", () => {
+		const maxCollisionRate = 0.35;
+
 		it("returns 0 for empty strings", () => {
-			const map = new HashMap();
 			expect(map.hash("")).toBe(0);
 		});
-		it("produces different hashes for different keys", () => {
-			const map = new HashMap();
-			const hash1 = map.hash("apple");
-			const hash2 = map.hash("banana");
-			const hash3 = map.hash("carrot");
+		it(`has a collision rate of less than ${maxCollisionRate} when at the max default load factor of 0.75`, () => {
+			map._capacity = 1024;
 
-			expect(hash1).not.toBe(hash2);
-			expect(hash2).not.toBe(hash3);
-			expect(hash3).not.toBe(hash1);
+			const generateRandomString = function (length = 8) {
+				const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+				const str = Array.from(
+					{ length },
+					() => chars[Math.floor(Math.random() * chars.length)]
+				).join("");
+
+				return str;
+			};
+
+			const numKeys = map._capacity * map._loadFactor;
+			const keys = Array.from({ length: numKeys }, () => generateRandomString());
+			const buckets = new Array(map._capacity).fill(null).map(() => []);
+
+			keys.forEach(key => buckets[map.hash(key)].push(key));
+
+			const numCollisions = buckets.reduce(
+				(cols, bucket) => cols + Math.max(bucket.length - 1, 0),
+				0
+			);
+			const collisionRate = numCollisions / numKeys;
+
+			expect(collisionRate).toBeLessThanOrEqual(maxCollisionRate);
 		});
 		it("stays within bounds for long string", () => {
-			const capacity = 16;
-			const map = new HashMap(capacity);
 			const longKey = Array.from({ length: Math.floor(Math.random() * 10000) }, () =>
 				String.fromCharCode(97 + Math.floor(Math.random() * 26))
 			).join("");
 			const hash = map.hash(longKey);
 
 			expect(hash).toBeGreaterThanOrEqual(0);
-			expect(hash).toBeLessThan(capacity);
+			expect(hash).toBeLessThan(map._capacity);
 		});
 	});
-	describe("set", () => {
-		let map, mockBucket;
-
-		beforeEach(() => {
-			map = new HashMap(16);
-
-			mockBucket = {
-				append: jest.fn(),
-			};
-
-			hashSpy = jest.spyOn(map, "hash").mockReturnValue(3);
-			map._buckets[3] = mockBucket;
-		});
+	describe("set()", () => {
 		it("defines set()", () => {
-			expect(typeof map.set).toBe("function");
+			expect(typeof singleBucketMap.set).toBe("function");
 		});
-		it("assigns a value to a key with null value", () => {
-			const keyVal = { key: "Rama", value: "red" };
-			map.set(keyVal.key, keyVal.value);
-			expect(mockBucket.append).toHaveBeenCalledWith(keyVal);
+		it("assigns a value to a key not in the bucket", () => {
+			singleBucketMap.set(keyVal.key, keyVal.value);
+			expect(singleBucketMap._buckets[0]._head).not.toBeNull();
+		});
+		it("overwrites the value of a key already in the bucket", () => {
+			const newValue = "green";
+			singleBucketMap.set(keyVal.key, keyVal.value);
+			singleBucketMap.set(keyVal.key, newValue);
+			expect(singleBucketMap._buckets[0]._head.value.value).toBe(newValue);
 		});
 		it("handles collisions by storing multiple key-value pairs in the same bucket", () => {
-			const keyVal1 = { key: "Rama", value: "red" };
-			const keyVal2 = { key: "Sita", value: "green" };
-
-			map.set(keyVal1.key, keyVal1.value);
-			map.set(keyVal2.key, keyVal2.value);
-
-			expect(mockBucket.append).toHaveBeenCalledTimes(2);
-			expect(mockBucket.append).toHaveBeenCalledWith(keyVal1);
-			expect(mockBucket.append).toHaveBeenCalledWith(keyVal2);
+			keyVals.forEach(keyVal => singleBucketMap.set(keyVal.key, keyVal.value));
+			expect(singleBucketMap._buckets[0]._length).toBe(keyVals.length);
 		});
 		it("increments '_length' on successfully appending", () => {
-			const newMap = new HashMap();
-			const startLength = newMap._length;
-			const keyVals = [
-				{ key: "Rama", value: "red" },
-				{ key: "Sita", value: "green" },
-				{ key: "apple", value: "red" },
-				{ key: "banana", value: "yellow" },
-				{ key: "carrot", value: "orange" },
-			];
+			const startLength = map._length;
+			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
 
-			keyVals.forEach(keyVal => newMap.set(keyVal.key, keyVal.value));
-
-			expect(newMap._length).toBe(startLength + keyVals.length);
+			expect(map._length).toBe(startLength + keyVals.length);
 		});
 		it("does not increment '_length' when writing to an existing key", () => {
-			const newMap = new HashMap();
-			const startLength = newMap._length;
-			const keyVals = [
-				{ key: "Rama", value: "red" },
-				{ key: "Sita", value: "green" },
-				{ key: "apple", value: "red" },
-			];
+			const startLength = map._length;
+			const keys = keyVals
+				.slice(0, Math.max(1, Math.floor(Math.random() * keyVals.length)))
+				.map(keyVal => keyVal.key);
 
-			keyVals.forEach(keyVal => newMap.set(keyVal.key, keyVal.value));
-			newMap.set("apple", "green");
+			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
+			keys.forEach(key => map.set(key, "new value"));
 
-			expect(newMap._length).toBe(startLength + keyVals.length);
+			expect(map._length).toBe(startLength + keyVals.length);
 		});
 	});
-	describe("get", () => {
+	describe("get()", () => {
 		it("defines get()", () => {
-			const map = new HashMap();
 			expect(typeof map.get).toBe("function");
 		});
 		it("returns null if key not found", () => {
-			const map = new HashMap();
-			map.set("Rama", "red");
-			expect(map.get("Sita")).toBe(null);
+			map.set("apple", "red");
+			expect(map.get("banana")).toBe(null);
 		});
 		it("returns the value for a key where the key has no collisions", () => {
-			const keyVal = { key: "Rama", value: "red" };
-			const map = new HashMap();
 			map.set(keyVal.key, keyVal.value);
 			expect(map.get(keyVal.key)).toBe(keyVal.value);
 		});
 		it("returns the value for a key where the key has collisions", () => {
-			const map = new HashMap();
-			const keyVal1 = { key: "Rama", value: "red" };
-			const keyVal2 = { key: "Sita", value: "green" };
-
-			map.set(keyVal1.key, keyVal1.value);
-			map.set(keyVal2.key, keyVal2.value);
-
-			expect(map.get(keyVal1.key)).toBe(keyVal1.value);
-			expect(map.get(keyVal2.key)).toBe(keyVal2.value);
+			keyVals.forEach(keyVal => singleBucketMap.set(keyVal.key, keyVal.value));
+			expect(singleBucketMap.get(keyVal.key)).toBe(keyVal.value);
 		});
 	});
-	describe("has", () => {
+	describe("has()", () => {
 		it("defines has()", () => {
-			const map = new HashMap();
 			expect(typeof map.has).toBe("function");
 		});
 		it("returns a false if a given key is not in the hash map", () => {
-			const map = new HashMap();
 			expect(map.has("apple")).toBe(false);
 		});
 		it("returns a true if a given key is in the hash map", () => {
-			const map = new HashMap();
-			map.set("apple", "red");
-			expect(map.has("apple")).toBe(true);
+			map.set(keyVal.key, keyVal.value);
+			expect(map.has(keyVal.key)).toBe(true);
 		});
 	});
-	describe("remove", () => {
+	describe("remove()", () => {
 		it("defines remove()", () => {
-			const map = new HashMap();
 			expect(typeof map.remove).toBe("function");
 		});
 		it("returns false if key not found", () => {
-			const map = new HashMap();
-			map.set("Rama", "red");
-			expect(map.remove("Sita")).toBe(false);
+			map.set("apple", "red");
+			singleBucketMap.set("apple", "red");
+			expect(map.remove("banana")).toBe(false);
+			expect(singleBucketMap.remove("banana")).toBe(false);
 		});
 		it("returns true if key is in the hash map", () => {
-			const map = new HashMap();
-			map.set("Rama", "red");
-			expect(map.remove("Rama")).toBe(true);
+			map.set(keyVal.key, keyVal.value);
+			expect(map.remove(keyVal.key)).toBe(true);
 		});
 		it("removes the value for a key where the key has no collisions", () => {
-			const keyVal = { key: "Rama", value: "red" };
-			const map = new HashMap();
+			singleBucketMap.set(keyVal.key, keyVal.value);
+			singleBucketMap.remove(keyVal.key);
 
-			map.set(keyVal.key, keyVal.value);
-			map.remove(keyVal.key);
-
-			expect(map.has(keyVal.key)).toBe(false);
+			expect(singleBucketMap.has(keyVal.key)).toBe(false);
 		});
 		it("removes the value for a key where the key has collisions", () => {
-			const map = new HashMap(1);
-			const keyVal1 = { key: "Rama", value: "red" };
-			const keyVal2 = { key: "Sita", value: "green" };
-
-			map.set(keyVal1.key, keyVal1.value);
-			map.set(keyVal2.key, keyVal2.value);
-			map.remove(keyVal1.key);
-
-			expect(map.has(keyVal1.key)).toBe(false);
-			expect(map._buckets[0].head).not.toBeNull();
+			keyVals.forEach(keyVal => singleBucketMap.set(keyVal.key, keyVal.value));
+			map.remove(keyVal.key);
+			expect(map.has(keyVal.key)).toBe(false);
 		});
 		it("decrements '_length' when removing a value", () => {
-			const map = new HashMap();
-			const keyVal1 = { key: "Rama", value: "red" };
-			const keyVal2 = { key: "Sita", value: "green" };
-
-			map.set(keyVal1.key, keyVal1.value);
-			map.set(keyVal2.key, keyVal2.value);
-
-			const length = map._length;
-
-			map.remove(keyVal2.key);
-
-			expect(map._length).toBe(length - 1);
+			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
+			map.remove(keyVal.key);
+			expect(map._length).toBe(keyVals.length - 1);
 		});
 		it("decrements '_length' when removing a the last value in the hash mpa", () => {
-			const map = new HashMap();
-			const keyVal = { key: "Rama", value: "red" };
-
 			map.set(keyVal.key, keyVal.value);
-
 			const length = map._length;
-
 			map.remove(keyVal.key);
 
 			expect(map._length).toBe(length - 1);
 		});
 	});
-	describe("clear", () => {
+	describe("clear()", () => {
 		it("defines clear()", () => {
-			const map = new HashMap();
 			expect(typeof map.clear).toBe("function");
 		});
 		it("removes all entries in the hash map", () => {
-			const map = new HashMap();
-
-			map.set("apple", "red");
-			map.set("banana", "yellow");
+			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
 			map.clear();
-
 			expect(map._buckets.every(bucket => bucket._head === null)).toBe(true);
 		});
 	});
-	describe("keys", () => {
+	describe("keys()", () => {
 		it("defines keys()", () => {
-			const map = new HashMap();
 			expect(typeof map.keys).toBe("function");
 		});
 		it("returns an array containing all keys, not necessarily in order", () => {
-			const keyVals = [
-				{ key: "Rama", value: "red" },
-				{ key: "Sita", value: "green" },
-				{ key: "apple", value: "red" },
-				{ key: "banana", value: "yellow" },
-				{ key: "carrot", value: "orange" },
-			];
 			const keys = keyVals.map(keyVal => keyVal.key);
-			const map = new HashMap();
-
 			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
-
 			expect(map.keys().sort()).toEqual(keys.sort());
 		});
 	});
-	describe("keys", () => {
+	describe("keys()", () => {
 		it("defines values()", () => {
-			const map = new HashMap();
 			expect(typeof map.values).toBe("function");
 		});
 		it("returns an array containing all values, not necessarily in order", () => {
-			const keyVals = [
-				{ key: "Rama", value: "red" },
-				{ key: "Sita", value: "green" },
-				{ key: "apple", value: "red" },
-				{ key: "banana", value: "yellow" },
-				{ key: "carrot", value: "orange" },
-			];
 			const values = keyVals.map(keyVal => keyVal.value);
-			const map = new HashMap();
-
 			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
-
 			expect(map.values().sort()).toEqual(values.sort());
 		});
 	});
-	describe("entries", () => {
+	describe("entries()", () => {
 		it("defines entries()", () => {
-			const map = new HashMap();
 			expect(typeof map.entries).toBe("function");
 		});
 		it("returns an array that contains each key-value pair", () => {
-			const keyVals = [
-				{ key: "Rama", value: "red" },
-				{ key: "Sita", value: "green" },
-				{ key: "apple", value: "red" },
-				{ key: "banana", value: "yellow" },
-				{ key: "carrot", value: "orange" },
-			];
 			const entries = keyVals.map(keyVal => [keyVal.key, keyVal.value]);
-			const map = new HashMap();
-
 			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
-
 			expect(map.entries().sort()).toEqual(entries.sort());
 		});
 	});
