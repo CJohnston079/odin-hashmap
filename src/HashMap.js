@@ -24,6 +24,20 @@ class HashMap {
 		return hashCode;
 	}
 
+	grow() {
+		const entries = this.entries();
+
+		this._capacity *= 2;
+		this._buckets = new Array(this._capacity).fill(null).map(() => new Bucket());
+
+		for (const [key, value] of entries) {
+			const hashCode = this.hash(key);
+			const bucket = this._buckets[hashCode];
+
+			bucket.append({ key, value });
+		}
+	}
+
 	set(key, value) {
 		const hashCode = this.hash(key);
 		const bucket = this._buckets[hashCode];
