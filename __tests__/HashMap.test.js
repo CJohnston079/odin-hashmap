@@ -246,17 +246,29 @@ describe("HashMap", () => {
 			map.remove(keyVal.key);
 			expect(map.has(keyVal.key)).toBe(false);
 		});
-		it("decrements '_length' when removing a value", () => {
+		it("decrements '_length' from map and bucket when removing a value", () => {
 			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
+
+			const hash = map.hash(keyVal.key);
+			const bucket = map._buckets[hash];
+			const startBucketLength = bucket._length;
+
 			map.remove(keyVal.key);
 			expect(map._length).toBe(keyVals.length - 1);
+			expect(bucket._length).toBe(startBucketLength - 1);
 		});
-		it("decrements '_length' when removing a the last value in the hash mpa", () => {
+		it("decrements '_length' from map and bucket when removing a the last value in the hash map", () => {
 			map.set(keyVal.key, keyVal.value);
+
+			const hash = map.hash(keyVal.key);
+			const bucket = map._buckets[hash];
+			const startBucketLength = bucket._length;
+
 			const length = map._length;
 			map.remove(keyVal.key);
 
 			expect(map._length).toBe(length - 1);
+			expect(bucket._length).toBe(startBucketLength - 1);
 		});
 	});
 	describe("clear()", () => {
