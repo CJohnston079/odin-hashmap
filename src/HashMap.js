@@ -83,6 +83,7 @@ class HashMap {
 
 		if (bucket._head.value.key === key) {
 			bucket._head = bucket._head.next;
+			bucket._length -= 1;
 			this._length -= 1;
 			return true;
 		}
@@ -92,6 +93,7 @@ class HashMap {
 		for (let i = 0; i < bucket._length; i += 1) {
 			if (current.next && current.next.value.key === key) {
 				current.next = current.next.next;
+				bucket._length -= 1;
 				this._length -= 1;
 				return true;
 			}
