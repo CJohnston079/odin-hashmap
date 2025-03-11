@@ -49,6 +49,10 @@ class HashMap {
 			this._length += 1;
 		}
 
+		if (this._length > this._capacity * this._loadFactor) {
+			this.grow();
+		}
+
 		return;
 	}
 

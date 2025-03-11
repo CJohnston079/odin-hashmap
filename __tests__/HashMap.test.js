@@ -21,7 +21,7 @@ describe("HashMap", () => {
 
 	beforeEach(() => {
 		map = new HashMap();
-		singleBucketMap = new HashMap(1, 1);
+		singleBucketMap = new HashMap(1, Infinity);
 	});
 
 	describe("constructor", () => {
@@ -183,6 +183,13 @@ describe("HashMap", () => {
 			keys.forEach(key => map.set(key, "new value"));
 
 			expect(map._length).toBe(startLength + keyVals.length);
+		});
+		it("calls 'HashMap.grow() if loadFactor is reached", () => {
+			const mockGrow = jest.fn();
+			singleBucketMap._loadFactor = 1;
+			singleBucketMap.grow = mockGrow;
+			keyVals.forEach(keyVal => singleBucketMap.set(keyVal.key, keyVal.value));
+			expect(mockGrow).toHaveBeenCalledTimes(keyVals.length - 1);
 		});
 	});
 	describe("get()", () => {
