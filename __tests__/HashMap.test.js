@@ -21,7 +21,7 @@ describe("HashMap", () => {
 
 	beforeEach(() => {
 		map = new HashMap();
-		singleBucketMap = new HashMap(1, 1);
+		singleBucketMap = new HashMap(1, Infinity);
 	});
 
 	describe("constructor", () => {
@@ -96,6 +96,59 @@ describe("HashMap", () => {
 			expect(hash).toBeLessThan(map._capacity);
 		});
 	});
+	describe("keys()", () => {
+		it("defines keys()", () => {
+			expect(typeof map.keys).toBe("function");
+		});
+		it("returns an array containing all keys, not necessarily in order", () => {
+			const keys = keyVals.map(keyVal => keyVal.key);
+			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
+			expect(map.keys().sort()).toEqual(keys.sort());
+		});
+	});
+	describe("values()", () => {
+		it("defines values()", () => {
+			expect(typeof map.values).toBe("function");
+		});
+		it("returns an array containing all values, not necessarily in order", () => {
+			const values = keyVals.map(keyVal => keyVal.value);
+			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
+			expect(map.values().sort()).toEqual(values.sort());
+		});
+	});
+	describe("entries()", () => {
+		it("defines entries()", () => {
+			expect(typeof map.entries).toBe("function");
+		});
+		it("returns an array that contains each key-value pair", () => {
+			const entries = keyVals.map(keyVal => [keyVal.key, keyVal.value]);
+			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
+			expect(map.entries().sort()).toEqual(entries.sort());
+		});
+	});
+	describe("grow()", () => {
+		it("defines grow()", () => {
+			expect(typeof map.grow).toBe("function");
+		});
+		it("doubles the number of buckets and updates '_capacity'", () => {
+			const numStartingBuckets = map._buckets.length;
+			const startingCapacity = map._capacity;
+			map.grow();
+			expect(map._buckets.length).toBe(numStartingBuckets * 2);
+			expect(map._capacity).toBe(startingCapacity * 2);
+		});
+		it("redistributes entries across new buckets", () => {
+			keyVals.forEach(keyVal => singleBucketMap.set(keyVal.key, keyVal.value));
+			singleBucketMap.grow();
+			expect(singleBucketMap._buckets[1]._head).not.toBeNull();
+		});
+		it("does not alter the '_length' property when redistributing entries", () => {
+			keyVals.forEach(keyVal => singleBucketMap.set(keyVal.key, keyVal.value));
+			const length = singleBucketMap._length;
+			map.grow();
+			expect(singleBucketMap._length).toBe(length);
+		});
+	});
 	describe("set()", () => {
 		it("defines set()", () => {
 			expect(typeof singleBucketMap.set).toBe("function");
@@ -130,6 +183,13 @@ describe("HashMap", () => {
 			keys.forEach(key => map.set(key, "new value"));
 
 			expect(map._length).toBe(startLength + keyVals.length);
+		});
+		it("calls 'HashMap.grow() if loadFactor is reached", () => {
+			const mockGrow = jest.fn();
+			singleBucketMap._loadFactor = 1;
+			singleBucketMap.grow = mockGrow;
+			keyVals.forEach(keyVal => singleBucketMap.set(keyVal.key, keyVal.value));
+			expect(mockGrow).toHaveBeenCalledTimes(keyVals.length - 1);
 		});
 	});
 	describe("get()", () => {
@@ -186,17 +246,29 @@ describe("HashMap", () => {
 			map.remove(keyVal.key);
 			expect(map.has(keyVal.key)).toBe(false);
 		});
-		it("decrements '_length' when removing a value", () => {
+		it("decrements '_length' from map and bucket when removing a value", () => {
 			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
+
+			const hash = map.hash(keyVal.key);
+			const bucket = map._buckets[hash];
+			const startBucketLength = bucket._length;
+
 			map.remove(keyVal.key);
 			expect(map._length).toBe(keyVals.length - 1);
+			expect(bucket._length).toBe(startBucketLength - 1);
 		});
-		it("decrements '_length' when removing a the last value in the hash mpa", () => {
+		it("decrements '_length' from map and bucket when removing a the last value in the hash map", () => {
 			map.set(keyVal.key, keyVal.value);
+
+			const hash = map.hash(keyVal.key);
+			const bucket = map._buckets[hash];
+			const startBucketLength = bucket._length;
+
 			const length = map._length;
 			map.remove(keyVal.key);
 
 			expect(map._length).toBe(length - 1);
+			expect(bucket._length).toBe(startBucketLength - 1);
 		});
 	});
 	describe("clear()", () => {
@@ -207,36 +279,6 @@ describe("HashMap", () => {
 			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
 			map.clear();
 			expect(map._buckets.every(bucket => bucket._head === null)).toBe(true);
-		});
-	});
-	describe("keys()", () => {
-		it("defines keys()", () => {
-			expect(typeof map.keys).toBe("function");
-		});
-		it("returns an array containing all keys, not necessarily in order", () => {
-			const keys = keyVals.map(keyVal => keyVal.key);
-			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
-			expect(map.keys().sort()).toEqual(keys.sort());
-		});
-	});
-	describe("keys()", () => {
-		it("defines values()", () => {
-			expect(typeof map.values).toBe("function");
-		});
-		it("returns an array containing all values, not necessarily in order", () => {
-			const values = keyVals.map(keyVal => keyVal.value);
-			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
-			expect(map.values().sort()).toEqual(values.sort());
-		});
-	});
-	describe("entries()", () => {
-		it("defines entries()", () => {
-			expect(typeof map.entries).toBe("function");
-		});
-		it("returns an array that contains each key-value pair", () => {
-			const entries = keyVals.map(keyVal => [keyVal.key, keyVal.value]);
-			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
-			expect(map.entries().sort()).toEqual(entries.sort());
 		});
 	});
 });

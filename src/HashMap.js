@@ -24,6 +24,20 @@ class HashMap {
 		return hashCode;
 	}
 
+	grow() {
+		const entries = this.entries();
+
+		this._capacity *= 2;
+		this._buckets = new Array(this._capacity).fill(null).map(() => new Bucket());
+
+		for (const [key, value] of entries) {
+			const hashCode = this.hash(key);
+			const bucket = this._buckets[hashCode];
+
+			bucket.append({ key, value });
+		}
+	}
+
 	set(key, value) {
 		const hashCode = this.hash(key);
 		const bucket = this._buckets[hashCode];
@@ -33,6 +47,10 @@ class HashMap {
 
 		if (bucket.size > bucketSize) {
 			this._length += 1;
+		}
+
+		if (this._length > this._capacity * this._loadFactor) {
+			this.grow();
 		}
 
 		return;
@@ -65,6 +83,7 @@ class HashMap {
 
 		if (bucket._head.value.key === key) {
 			bucket._head = bucket._head.next;
+			bucket._length -= 1;
 			this._length -= 1;
 			return true;
 		}
@@ -74,6 +93,7 @@ class HashMap {
 		for (let i = 0; i < bucket._length; i += 1) {
 			if (current.next && current.next.value.key === key) {
 				current.next = current.next.next;
+				bucket._length -= 1;
 				this._length -= 1;
 				return true;
 			}
