@@ -33,3 +33,22 @@ Alternatively, you can watch for changes to the tests or modules using:
 ```Bash
 npm run watch
 ```
+
+## `Node` class
+
+Returns a new `Node`. `Node`s are used as the individual elements of a `Bucket`.
+
+### `Node.entry`
+
+- `entry` is the data which is stored in `Node`.
+- `entry` is initialised as `null` by default.
+
+### `Node.next`
+
+- `next` is the pointer to the next `Node` in the `LinkedList`.
+- `next` is initialised as `null` by default.
+
+### `Node.setNext()`
+
+- `setnext()` updates the value of `next` for a `Node`.
+- It throws an error if it is given anything other than a `Node` instance.
