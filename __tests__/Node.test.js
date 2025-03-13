@@ -9,12 +9,12 @@ describe("Node", () => {
 		headNode = new Node("dog");
 	});
 
-	it("should initialise 'value' and 'next' as null by default", () => {
-		expect(defaultNode.value).toBeNull();
+	it("should initialise 'entry' and 'next' as null by default", () => {
+		expect(defaultNode.entry).toBeNull();
 		expect(defaultNode.next).toBeNull();
 	});
-	it("should correctly set a value when provided", () => {
-		expect(headNode.value).toBe("dog");
+	it("should correctly set a entry when provided", () => {
+		expect(headNode.entry).toBe("dog");
 		expect(headNode.next).toBeNull();
 	});
 	describe("setNode", () => {

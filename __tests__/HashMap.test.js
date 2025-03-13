@@ -161,7 +161,7 @@ describe("HashMap", () => {
 			const newValue = "green";
 			singleBucketMap.set(keyVal.key, keyVal.value);
 			singleBucketMap.set(keyVal.key, newValue);
-			expect(singleBucketMap._buckets[0]._head.value.value).toBe(newValue);
+			expect(singleBucketMap._buckets[0]._head.entry.value).toBe(newValue);
 		});
 		it("handles collisions by storing multiple key-value pairs in the same bucket", () => {
 			keyVals.forEach(keyVal => singleBucketMap.set(keyVal.key, keyVal.value));

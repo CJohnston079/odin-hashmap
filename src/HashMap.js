@@ -63,8 +63,8 @@ class HashMap {
 		let current = bucket._head;
 
 		for (let i = 0; i < bucket._length; i += 1) {
-			if (current.value.key === key) {
-				return current.value.value;
+			if (current.entry.key === key) {
+				return current.entry.value;
 			}
 
 			current = current.next;
@@ -81,7 +81,7 @@ class HashMap {
 			return false;
 		}
 
-		if (bucket._head.value.key === key) {
+		if (bucket._head.entry.key === key) {
 			bucket._head = bucket._head.next;
 			bucket._length -= 1;
 			this._length -= 1;
@@ -91,7 +91,7 @@ class HashMap {
 		let current = bucket._head;
 
 		for (let i = 0; i < bucket._length; i += 1) {
-			if (current.next && current.next.value.key === key) {
+			if (current.next && current.next.entry.key === key) {
 				current.next = current.next.next;
 				bucket._length -= 1;
 				this._length -= 1;
@@ -121,7 +121,7 @@ class HashMap {
 			let current = bucket._head;
 
 			while (current) {
-				bucketKeys.push(current.value.key);
+				bucketKeys.push(current.entry.key);
 				current = current.next;
 			}
 
@@ -136,7 +136,7 @@ class HashMap {
 			let current = bucket._head;
 
 			while (current) {
-				bucketVals.push(current.value.value);
+				bucketVals.push(current.entry.value);
 				current = current.next;
 			}
 
@@ -151,8 +151,8 @@ class HashMap {
 			let current = bucket._head;
 
 			while (current) {
-				const key = current.value.key;
-				const value = current.value.value;
+				const key = current.entry.key;
+				const value = current.entry.value;
 				bucketEntries.push([key, value]);
 				current = current.next;
 			}

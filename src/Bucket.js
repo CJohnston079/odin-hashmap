@@ -35,8 +35,8 @@ class Bucket {
 			let current = this._head;
 
 			while (current) {
-				if (current.value.key === keyVal.key) {
-					current.value.value = keyVal.value;
+				if (current.entry.key === keyVal.key) {
+					current.entry.value = keyVal.value;
 					return;
 				}
 
@@ -61,7 +61,7 @@ class Bucket {
 		let current = this._head;
 
 		while (current) {
-			if (current.value.key === key) {
+			if (current.entry.key === key) {
 				return true;
 			}
 
@@ -79,7 +79,7 @@ class Bucket {
 		let current = this._head;
 
 		for (let i = 0; i < this._length; i += 1) {
-			if (current.value.key === key) {
+			if (current.entry.key === key) {
 				return i;
 			}
 
@@ -98,7 +98,7 @@ class Bucket {
 		let current = this._head;
 
 		while (current) {
-			str += `( ${current.value.key}: ${current.value.value} ) -> `;
+			str += `( ${current.entry.key}: ${current.entry.value} ) -> `;
 			current = current.next;
 		}
 

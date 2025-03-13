@@ -3,14 +3,14 @@ import Bucket from "../src/Bucket";
 describe("Bucket", () => {
 	let emptyBucket;
 	let testBucket;
-	let tailNode = { value: { key: "apple", value: "red" }, next: null };
-	let midNode = { value: { key: "banana", value: "yellow" }, next: tailNode };
-	let headNode = { value: { key: "carrot", value: "orange" }, next: midNode };
+	let tailNode = { entry: { key: "apple", value: "red" }, next: null };
+	let midNode = { entry: { key: "banana", value: "yellow" }, next: tailNode };
+	let headNode = { entry: { key: "carrot", value: "orange" }, next: midNode };
 
 	beforeEach(() => {
-		tailNode = { value: { key: "apple", value: "red" }, next: null };
-		midNode = { value: { key: "banana", value: "yellow" }, next: tailNode };
-		headNode = { value: { key: "carrot", value: "orange" }, next: midNode };
+		tailNode = { entry: { key: "apple", value: "red" }, next: null };
+		midNode = { entry: { key: "banana", value: "yellow" }, next: tailNode };
+		headNode = { entry: { key: "carrot", value: "orange" }, next: midNode };
 
 		emptyBucket = new Bucket();
 		testBucket = new Bucket(headNode);
@@ -31,23 +31,23 @@ describe("Bucket", () => {
 			emptyBucket.append({ key: "carrot", value: "orange" });
 
 			expect(emptyBucket._head).not.toBeNull();
-			expect(emptyBucket._head.value).toEqual({ key: "carrot", value: "orange" });
+			expect(emptyBucket._head.entry).toEqual({ key: "carrot", value: "orange" });
 		});
 		it("should append a node to a non-empty list", () => {
 			emptyBucket.append({ key: "carrot", value: "orange" });
 			emptyBucket.append({ key: "banana", value: "yellow" });
 
 			expect(emptyBucket._head.next).not.toBeNull();
-			expect(emptyBucket._head.next.value).toEqual({ key: "banana", value: "yellow" });
+			expect(emptyBucket._head.next.entry).toEqual({ key: "banana", value: "yellow" });
 			expect(emptyBucket._head.next.next).toBeNull();
 		});
 		it("should overwrite the value of a node if the key is already in the bucket", () => {
 			testBucket.append({ key: "carrot", value: "brown" });
 			testBucket.append({ key: "banana", value: "lime" });
 			testBucket.append({ key: "apple", value: "green" });
-			expect(testBucket._head.value).toEqual({ key: "carrot", value: "brown" });
-			expect(testBucket._head.next.value).toEqual({ key: "banana", value: "lime" });
-			expect(testBucket._head.next.next.value).toEqual({ key: "apple", value: "green" });
+			expect(testBucket._head.entry).toEqual({ key: "carrot", value: "brown" });
+			expect(testBucket._head.next.entry).toEqual({ key: "banana", value: "lime" });
+			expect(testBucket._head.next.next.entry).toEqual({ key: "apple", value: "green" });
 		});
 		it("increments _length when appending a node", () => {
 			const startingLength = emptyBucket._length;
