@@ -67,29 +67,13 @@ class HashMap {
 	remove(key) {
 		const hashCode = this.hash(key);
 		const bucket = this._buckets[hashCode];
+		const bucketSize = bucket.size;
 
-		if (!bucket._head) {
-			return false;
-		}
+		bucket.remove(key);
 
-		if (bucket._head.entry.key === key) {
-			bucket._head = bucket._head.next;
-			bucket._length -= 1;
+		if (bucket.size < bucketSize) {
 			this._length -= 1;
 			return true;
-		}
-
-		let current = bucket._head;
-
-		for (let i = 0; i < bucket._length; i += 1) {
-			if (current.next && current.next.entry.key === key) {
-				current.next = current.next.next;
-				bucket._length -= 1;
-				this._length -= 1;
-				return true;
-			}
-
-			current = current.next;
 		}
 
 		return false;
