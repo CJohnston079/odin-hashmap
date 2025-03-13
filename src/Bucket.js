@@ -124,6 +124,20 @@ class Bucket {
 
 		return (str += "null");
 	}
+
+	toArr() {
+		const entries = [];
+		let current = this._head;
+
+		while (current) {
+			const key = current.entry.key;
+			const value = current.entry.value;
+			entries.push([key, value]);
+			current = current.next;
+		}
+
+		return entries;
+	}
 }
 
 export default Bucket;
