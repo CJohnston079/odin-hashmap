@@ -71,16 +71,12 @@ class Bucket {
 		return false;
 	}
 
-	findKey(key) {
-		if (!this._head) {
-			return null;
-		}
-
+	findValue(key) {
 		let current = this._head;
 
 		for (let i = 0; i < this._length; i += 1) {
 			if (current.entry.key === key) {
-				return i;
+				return current.entry.value;
 			}
 
 			current = current.next;
