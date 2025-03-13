@@ -103,20 +103,20 @@ describe("Bucket", () => {
 			expect(testBucket.containsKey("apple")).toBe(true);
 		});
 	});
-	describe("findKey()", () => {
-		it("defines findKey()", () => {
-			expect(typeof emptyBucket.findKey).toBe("function");
+	describe("findValue()", () => {
+		it("defines get()", () => {
+			expect(typeof emptyBucket.findValue).toBe("function");
 		});
-		it("returns null for empty lists", () => {
-			expect(emptyBucket.findKey({ key: "carrot", value: "orange" })).toBe(null);
+		it("returns null if key not found", () => {
+			expect(testBucket.findValue("hamster")).toBe(null);
 		});
-		it("returns null if value is not found", () => {
-			expect(testBucket.findKey("hamster")).toBe(null);
+		it("returns the value for a key in a single-entry bucket", () => {
+			const singleEntryBucket = new Bucket(tailNode);
+			singleEntryBucket._length = 1;
+			expect(singleEntryBucket.findValue(tailNode.entry.key)).toBe(tailNode.entry.value);
 		});
-		it("returns the index of found values", () => {
-			expect(testBucket.findKey("carrot")).toBe(0);
-			expect(testBucket.findKey("banana")).toBe(1);
-			expect(testBucket.findKey("apple")).toBe(2);
+		it("returns the value for a key in a multi-entry bucket", () => {
+			expect(testBucket.findValue(tailNode.entry.key)).toBe(tailNode.entry.value);
 		});
 	});
 	describe("toString()", () => {
