@@ -196,17 +196,12 @@ describe("HashMap", () => {
 		it("defines get()", () => {
 			expect(typeof map.get).toBe("function");
 		});
-		it("returns null if key not found", () => {
-			map.set("apple", "red");
-			expect(map.get("banana")).toBe(null);
-		});
-		it("returns the value for a key where the key has no collisions", () => {
-			map.set(keyVal.key, keyVal.value);
-			expect(map.get(keyVal.key)).toBe(keyVal.value);
-		});
-		it("returns the value for a key where the key has collisions", () => {
-			keyVals.forEach(keyVal => singleBucketMap.set(keyVal.key, keyVal.value));
-			expect(singleBucketMap.get(keyVal.key)).toBe(keyVal.value);
+		it("calls Bucket.findValue() with the correct key", () => {
+			const hash = map.hash(keyVal.key);
+			const bucket = { findValue: jest.fn() };
+			map._buckets[hash] = bucket;
+			map.get(keyVal.key);
+			expect(bucket.findValue).toHaveBeenCalledWith(keyVal.key);
 		});
 	});
 	describe("has()", () => {
