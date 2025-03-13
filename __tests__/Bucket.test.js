@@ -1,11 +1,8 @@
 import Bucket from "../src/Bucket";
 
 describe("Bucket", () => {
-	let emptyBucket;
-	let testBucket;
-	let tailNode = { entry: { key: "apple", value: "red" }, next: null };
-	let midNode = { entry: { key: "banana", value: "yellow" }, next: tailNode };
-	let headNode = { entry: { key: "carrot", value: "orange" }, next: midNode };
+	let emptyBucket, singleEntryBucket, testBucket;
+	let tailNode, midNode, headNode;
 
 	beforeEach(() => {
 		tailNode = { entry: { key: "apple", value: "red" }, next: null };
@@ -13,6 +10,8 @@ describe("Bucket", () => {
 		headNode = { entry: { key: "carrot", value: "orange" }, next: midNode };
 
 		emptyBucket = new Bucket();
+		singleEntryBucket = new Bucket(tailNode);
+		singleEntryBucket._length = 1;
 		testBucket = new Bucket(headNode);
 		testBucket._length = 3;
 	});
@@ -65,6 +64,29 @@ describe("Bucket", () => {
 			}).toThrow(TypeError);
 		});
 	});
+	describe("remove()", () => {
+		it("defines remove()", () => {
+			expect(typeof emptyBucket.remove).toBe("function");
+		});
+		it("removes the value for a key for a single-entry bucket", () => {
+			singleEntryBucket.remove(tailNode.entry.key);
+			expect(singleEntryBucket.containsKey(tailNode.entry.key)).toBe(false);
+		});
+		it("removes the value for a key for a multi-entry bucket", () => {
+			testBucket.remove(tailNode.entry.key);
+			expect(testBucket.containsKey(tailNode.entry.key)).toBe(false);
+		});
+		it("decrements '_length' when removing a value from a single-entry bucket", () => {
+			const startBucketLength = singleEntryBucket._length;
+			singleEntryBucket.remove(tailNode.entry.key);
+			expect(singleEntryBucket._length).toBe(startBucketLength - 1);
+		});
+		it("decrements '_length' when removing a value from a multi-entry bucket", () => {
+			const startBucketLength = testBucket._length;
+			testBucket.remove(tailNode.entry.key);
+			expect(testBucket._length).toBe(startBucketLength - 1);
+		});
+	});
 	describe("head", () => {
 		it("defines head getter", () => {
 			expect(Bucket.prototype.hasOwnProperty("head")).toBe(true);
@@ -111,8 +133,6 @@ describe("Bucket", () => {
 			expect(testBucket.findValue("hamster")).toBe(null);
 		});
 		it("returns the value for a key in a single-entry bucket", () => {
-			const singleEntryBucket = new Bucket(tailNode);
-			singleEntryBucket._length = 1;
 			expect(singleEntryBucket.findValue(tailNode.entry.key)).toBe(tailNode.entry.value);
 		});
 		it("returns the value for a key in a multi-entry bucket", () => {

@@ -53,6 +53,30 @@ class Bucket {
 		this._length += 1;
 	}
 
+	remove(key) {
+		if (!this._head) {
+			return;
+		}
+
+		if (this._head.entry.key === key) {
+			this._head = this._head.next;
+			this._length -= 1;
+			return;
+		}
+
+		let current = this._head;
+
+		for (let i = 0; i < this._length; i += 1) {
+			if (current.next && current.next.entry.key === key) {
+				current.next = current.next.next;
+				this._length -= 1;
+				return;
+			}
+
+			current = current.next;
+		}
+	}
+
 	containsKey(key) {
 		if (!this._head) {
 			return false;
