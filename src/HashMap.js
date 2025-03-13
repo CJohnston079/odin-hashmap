@@ -59,18 +59,9 @@ class HashMap {
 	get(key) {
 		const hashCode = this.hash(key);
 		const bucket = this._buckets[hashCode];
+		const value = bucket.findValue(key);
 
-		let current = bucket._head;
-
-		for (let i = 0; i < bucket._length; i += 1) {
-			if (current.entry.key === key) {
-				return current.entry.value;
-			}
-
-			current = current.next;
-		}
-
-		return null;
+		return value;
 	}
 
 	remove(key) {
