@@ -87,36 +87,6 @@ describe("Bucket", () => {
 			expect(testBucket.size).toBe(3);
 		});
 	});
-	describe("tail()", () => {
-		it("defines tail()", () => {
-			expect(typeof emptyBucket.tail).toBe("function");
-		});
-		it("returns null for empty lists", () => {
-			expect(emptyBucket.tail()).toBeNull();
-		});
-		it("returns the last node for non-empty lists", () => {
-			expect(testBucket.tail()).toBe(tailNode.value);
-		});
-	});
-	describe("pop()", () => {
-		it("defines pop()", () => {
-			expect(typeof emptyBucket.pop).toBe("function");
-		});
-		it("removes the last node from the list", () => {
-			testBucket.pop();
-			expect(testBucket.tail()).toBe(midNode.value);
-		});
-		it("decrements length when popping a node", () => {
-			const startingLength = testBucket._length;
-			testBucket.pop();
-			expect(testBucket._length).toBe(startingLength - 1);
-		});
-		it("throws an error when attempting to pop from an empty list", () => {
-			expect(() => {
-				emptyBucket.pop();
-			}).toThrow(/.*empty list.*/i);
-		});
-	});
 	describe("containsKey()", () => {
 		it("defines containsKey()", () => {
 			expect(typeof emptyBucket.containsKey).toBe("function");

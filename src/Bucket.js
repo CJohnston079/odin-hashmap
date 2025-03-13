@@ -53,37 +53,6 @@ class Bucket {
 		this._length += 1;
 	}
 
-	tail() {
-		if (!this._head) {
-			return null;
-		}
-
-		let current = this._head;
-
-		while (current.next) {
-			current = current.next;
-		}
-
-		return current.value;
-	}
-
-	pop() {
-		if (!this._head) {
-			throw new Error(`Cannot pop from an empty list.`);
-		}
-
-		let current = this._head;
-
-		while (current.next.next) {
-			current = current.next;
-		}
-
-		current.next = null;
-		this._length -= 1;
-
-		return;
-	}
-
 	containsKey(key) {
 		if (!this._head) {
 			return false;
