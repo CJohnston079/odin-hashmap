@@ -143,12 +143,28 @@ describe("Bucket", () => {
 		it("defines toString()", () => {
 			expect(Bucket.prototype.hasOwnProperty("toString")).toBe(true);
 		});
-		it("returns an empty string for empty lists", () => {
+		it("returns an empty string if the bucket is empty", () => {
 			expect(emptyBucket.toString()).toBe("");
 		});
-		it("returns nodes in the format '( value ) -> ( value ) -> null' for non-empty lists", () => {
+		it("returns nodes in the format '( value ) -> ( value ) -> null'", () => {
 			const expected = "( carrot: orange ) -> ( banana: yellow ) -> ( apple: red ) -> null";
 			expect(testBucket.toString()).toBe(expected);
+		});
+	});
+	describe("toArr()", () => {
+		it("defines toArr()", () => {
+			expect(Bucket.prototype.hasOwnProperty("toArr")).toBe(true);
+		});
+		it("returns an empty string if the bucket is empty", () => {
+			expect(emptyBucket.toArr()).toEqual([]);
+		});
+		it("returns key-value pairs in the format '[[key, value], [key, value]]'", () => {
+			const expected = [
+				[headNode.entry.key, headNode.entry.value],
+				[midNode.entry.key, midNode.entry.value],
+				[tailNode.entry.key, tailNode.entry.value],
+			];
+			expect(testBucket.toArr()).toEqual(expected);
 		});
 	});
 });
