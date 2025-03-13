@@ -121,22 +121,7 @@ class HashMap {
 		return values;
 	}
 
-	entries() {
-		const entries = this._buckets.reduce((bucketEntries, bucket) => {
-			let current = bucket._head;
-
-			while (current) {
-				const key = current.entry.key;
-				const value = current.entry.value;
-				bucketEntries.push([key, value]);
-				current = current.next;
-			}
-
-			return bucketEntries;
-		}, []);
-
-		return entries;
-	}
+	entries = () => this._buckets.flatMap(bucket => bucket.toArr());
 }
 
 export default HashMap;
