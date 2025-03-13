@@ -230,40 +230,23 @@ describe("HashMap", () => {
 			map.set(keyVal.key, keyVal.value);
 			expect(map.remove(keyVal.key)).toBe(true);
 		});
-		it("removes the value for a key where the key has no collisions", () => {
-			singleBucketMap.set(keyVal.key, keyVal.value);
-			singleBucketMap.remove(keyVal.key);
-
-			expect(singleBucketMap.has(keyVal.key)).toBe(false);
-		});
-		it("removes the value for a key where the key has collisions", () => {
-			keyVals.forEach(keyVal => singleBucketMap.set(keyVal.key, keyVal.value));
-			map.remove(keyVal.key);
-			expect(map.has(keyVal.key)).toBe(false);
-		});
-		it("decrements '_length' from map and bucket when removing a value", () => {
-			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
-
+		it("calls Bucket.remove()", () => {
 			const hash = map.hash(keyVal.key);
-			const bucket = map._buckets[hash];
-			const startBucketLength = bucket._length;
-
+			const bucket = { remove: jest.fn() };
+			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
+			map._buckets[hash] = bucket;
+			map.remove(keyVal.key);
+			expect(bucket.remove).toHaveBeenCalledWith(keyVal.key);
+		});
+		it("decrements '_length' from map when removing a value", () => {
+			keyVals.forEach(keyVal => map.set(keyVal.key, keyVal.value));
 			map.remove(keyVal.key);
 			expect(map._length).toBe(keyVals.length - 1);
-			expect(bucket._length).toBe(startBucketLength - 1);
 		});
-		it("decrements '_length' from map and bucket when removing a the last value in the hash map", () => {
+		it("decrements '_length' from map when removing a the last value in the hash map", () => {
 			map.set(keyVal.key, keyVal.value);
-
-			const hash = map.hash(keyVal.key);
-			const bucket = map._buckets[hash];
-			const startBucketLength = bucket._length;
-
-			const length = map._length;
 			map.remove(keyVal.key);
-
-			expect(map._length).toBe(length - 1);
-			expect(bucket._length).toBe(startBucketLength - 1);
+			expect(map._length).toBe(0);
 		});
 	});
 	describe("clear()", () => {
