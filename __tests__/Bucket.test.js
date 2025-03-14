@@ -141,7 +141,7 @@ describe("Bucket", () => {
 	});
 	describe("toString()", () => {
 		it("defines toString()", () => {
-			expect(Bucket.prototype.hasOwnProperty("toString")).toBe(true);
+			expect(typeof emptyBucket.toString).toBe("function");
 		});
 		it("returns an empty string if the bucket is empty", () => {
 			expect(emptyBucket.toString()).toBe("");
@@ -153,9 +153,9 @@ describe("Bucket", () => {
 	});
 	describe("toArr()", () => {
 		it("defines toArr()", () => {
-			expect(Bucket.prototype.hasOwnProperty("toArr")).toBe(true);
+			expect(typeof emptyBucket.toArr).toBe("function");
 		});
-		it("returns an empty string if the bucket is empty", () => {
+		it("returns an empty array if the bucket is empty", () => {
 			expect(emptyBucket.toArr()).toEqual([]);
 		});
 		it("returns key-value pairs in the format '[[key, value], [key, value]]'", () => {
@@ -165,6 +165,25 @@ describe("Bucket", () => {
 				[tailNode.entry.key, tailNode.entry.value],
 			];
 			expect(testBucket.toArr()).toEqual(expected);
+		});
+	});
+	describe("getProperties", () => {
+		it("defines getProperties()", () => {
+			expect(typeof emptyBucket.getProperties).toBe("function");
+		});
+		it("returns an empty array if the bucket is empty", () => {
+			expect(emptyBucket.toArr()).toEqual([]);
+		});
+		it("returns an array of keys and values", () => {
+			const keys = [headNode.entry.key, midNode.entry.key, tailNode.entry.key];
+			const values = [headNode.entry.value, midNode.entry.value, tailNode.entry.value];
+			expect(testBucket.getProperties("key")).toEqual(keys);
+			expect(testBucket.getProperties("value")).toEqual(values);
+		});
+		it("throws an error if 'property' is not 'key' or 'value'", () => {
+			expect(() => {
+				testBucket.getProperties("entry");
+			}).toThrow();
 		});
 	});
 });
