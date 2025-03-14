@@ -138,6 +138,22 @@ class Bucket {
 
 		return entries;
 	}
+
+	getProperties(property) {
+		if ((property !== "key") & (property !== "value")) {
+			throw new Error("property must be 'key' or 'value");
+		}
+
+		const properties = [];
+		let current = this._head;
+
+		while (current) {
+			properties.push(current.entry[property]);
+			current = current.next;
+		}
+
+		return properties;
+	}
 }
 
 export default Bucket;
