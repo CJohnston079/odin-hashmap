@@ -91,35 +91,9 @@ class HashMap {
 		this._buckets = new Array(16).fill(null).map(() => new Bucket());
 	}
 
-	keys() {
-		const keys = this._buckets.reduce((bucketKeys, bucket) => {
-			let current = bucket._head;
+	keys = () => this._buckets.flatMap(bucket => bucket.getProperties("key"));
 
-			while (current) {
-				bucketKeys.push(current.entry.key);
-				current = current.next;
-			}
-
-			return bucketKeys;
-		}, []);
-
-		return keys;
-	}
-
-	values() {
-		const values = this._buckets.reduce((bucketVals, bucket) => {
-			let current = bucket._head;
-
-			while (current) {
-				bucketVals.push(current.entry.value);
-				current = current.next;
-			}
-
-			return bucketVals;
-		}, []);
-
-		return values;
-	}
+	values = () => this._buckets.flatMap(bucket => bucket.getProperties("value"));
 
 	entries = () => this._buckets.flatMap(bucket => bucket.toArr());
 }
