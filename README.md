@@ -6,7 +6,7 @@ This is a practice implementation of HashMap data structure in JavaScript.
 
 ### Project aims
 
-The project brief can be found here: [Project: Linked Lists | The Odin Project](https://www.theodinproject.com/lessons/javascript-hashmap). Below is a brief summary of the project aims:
+The project brief can be found here: [Project: HashMap | The Odin Project](https://www.theodinproject.com/lessons/javascript-hashmap). Below is a brief summary of the project aims:
 
 1. Implement a `Node` class/factory to manage individual data points.
 2. Implement a `Bucket` class/factory, a linked list style data structure to manage a sequence of nodes storing key-value pairs. `Bucket` should include utility methods that can be used to interact with the nodes in the bucket.
@@ -121,3 +121,82 @@ Returns a new `Bucket`, which is a chain of `Node`s.
 - If passed `"key"`, returns all keys in the bucket.
 - If passed `"value"`, returns all values in the bucket.
 - Throws an error if property is not `"key"` or `"value"`.
+
+## `HashMap` class
+
+Returns a new `HashMap`, an array of buckets to store and manage key-value pairs.
+
+### `HashMap` properties
+
+#### `HashMap._capacity`
+
+- The number of `Bucket` instances in the hash map. Defaults to 16.
+
+#### `HashMap._loadFactor`
+
+- The maximum number of `Nodes` in the hash map relative to `HashMap._capacity` before doubling the number of buckets.
+
+#### `HashMap._buckets`
+
+- An array containing instances of `Bucket` equal to `HashMap._capacity`.
+
+#### `HashMap._length`
+
+- The number of `Nodes` in the `HashMap` buckets.
+- `_length` is instantiated as 0.
+- It can be read using the getter `length()`.
+
+### `HashMap` methods
+
+#### `HashMap.hash(key)`
+
+- Returns a numeric `hashCode` derived from the passed `key`. `hashCode` will be between 0 and `HashMap._capacity`.
+
+#### `HashMap.grow()`
+
+- Doubles the number of buckets in the hash map, updating `Bucket._capacity` and retaining the existing `HashMap._length`.
+- `grow()` redistribues the entries from the old buckets across the new buckets.
+
+#### `Hashmap.set(key, value)`
+
+- Adds a new key-value pair to the hash map, or updates the `value` of `key` if `key` already exists in the hash map.
+- Increments `HashMap._length` by 1 when adding a new `key`.
+- Calls `HashMap.grow()` if `HashMap._loadFactor` is exceeded when adding a new `key`.
+
+#### `HashMap.get(key)`
+
+- Retrives the value of the given `key`.
+
+#### `HashMap.remove(key)`
+
+- Removes the entry for a given `key`.
+- Returns `false` if `key` is not in the hash map.
+- Decrements `HashMap._capacity` by 1 when a key is successfully removed.
+
+#### `HashMap.has(key)`
+
+- Returns `true` if the `key` is present in the hash map, otherwise returns `false`.
+
+#### `HashMap.clear()`
+
+- Empties the hash map of all entries, leaving a number of buckets equal to `HashMap._capacity`.
+
+#### `HashMap.keys()`
+
+- Returns an array of all keys in the hash map.
+
+#### `HashMap.values()`
+
+- Returns an array of all values in the hash map.
+
+#### `HashMap.entries()`
+
+- Returns an array of all key-value pairs in the hash map, in the format:
+
+```bash
+[
+  ["apple", "green"],
+  ["banana", "yellow"],
+  ["carrot", "orange"]
+]
+```
