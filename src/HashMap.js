@@ -88,7 +88,7 @@ class HashMap {
 	}
 
 	clear() {
-		this._buckets = new Array(16).fill(null).map(() => new Bucket());
+		this._buckets = new Array(this._capacity).fill(null).map(() => new Bucket());
 	}
 
 	keys = () => this._buckets.flatMap(bucket => bucket.getProperties("key"));
